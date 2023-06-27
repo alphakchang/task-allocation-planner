@@ -1,25 +1,36 @@
+from datetime import datetime, time
+
 class Linguist:
     """
     A class to represent a linguist.
 
     Attributes:
-        <String attributes>
+        <string attributes>
         name: string - The name of the linguist.
         locale: string - The primary locale that the linguist translates into. e.g. de-DE
         team: string - The strategic team in Alpha that the linguist belongs to. e.g. Nexus
 
-        <Number attributes>
-        available_hours: float - The contractual available hours of the linguist, default is 8.0
+        <datetime attributes>
+        start_time: datetime - The start time of the linguist on the day, default is 9am e.g. datetime(2023, 6, 27, 9, 0)
+        end_time: datetime - The end time of the linguist on the day
+
+        <number attributes>
+        contract_hours: float - The contractual available hours of the linguist, default is 8.0
         output: int - The linguist's own daily output word rate, default is 2400
         keep_deadlines: int - The ability to keep deadlines, a score rating from 1 to 10, default is 10
         
-        <Set attributes>
+        <Availability attribute>
+        remaining_availability_today: float - The remaining availability for the linguist today.
+
+        <list attributes>
+        plate: list - A list of all the tasks assigned to the linguist, each task is an instance of class Task, default is an empty list.
+
+        <set attributes>
         expertise: set - The area(s) of expertise of the linguist, default is an empty set
         client_exp: set = The client(s) that the linguist has experience working on, default is an empty set
 
-        <Dict attributes>
+        <dict attributes>
         client_feedback: dict = The feedback received from any client, in a dictionary format {"client": "feedback"}, default is an empty dict
-        plate: dict - The task(s) assigned to the linguist, in a dictionary format {"task.name": "task.required_hours"}, default is an empty dict
 
         <Task type attributes (all boolean and all yes by default)>
         translation
@@ -42,27 +53,49 @@ class Linguist:
     """
     
     def __init__(self, name: str, locale: str, team: str,
-                 available_hours: float=8.0, output: int=2400, keep_deadlines: int=10,
+                 start_time: time=None, end_time: time=None,
+                 contract_hours: float=8.0, output: int=2400, keep_deadlines: int=10,
+                 plate: list=[],
                  client_exp: set={}, expertise: set={},
-                 client_feedback: dict={}, plate: dict={},
+                 client_feedback: dict={},
                  translation: bool=True, review: bool=True, lso: bool=True, client_meeting: bool=True, test_translation: bool=True):
-        # <String attributes>
+        
+        # <string attributes>
         self.name = name
         self.locale = locale
         self.team = team
 
-        # <Number attributes>
-        self.available_hours = available_hours
+        # <datetime attributes>
+        if start_time is None:
+            now = datetime.now()
+            start_time = now.replace(hour=9, minute=0, second=0, microsecond=0)
+        self.start_time = start_time
+
+        if end_time is None:
+            now = datetime.now()
+            end_time = now.replace(hour=17, minute=0, second=0, microsecond=0)
+        self.end_time = end_time
+
+        # <number attributes>
+        self.contract_hours = contract_hours
         self.output = output
         self.keep_deadlines = keep_deadlines
 
-        # <Set attributes>
+        # <Availability attribute>
+        # The remaining_availability_today of a linguist is constantly changing since time is constantly moving forward, this attribute will be calculated by:
+        # finding the time_passed since start_time, then deduct contract_hours by time_passed, and all the task values in plate due today
+        time_passed = datetime.now() - self.start_time
+        self.remaining_availability_today = self.contract_hours - (time_passed.total_seconds() / 3600)
+
+        # <list attributes>
+        self.plate = plate
+
+        # <set attributes>
         self.client_exp = client_exp
         self.expertise = expertise
 
-        # <Dict attributes>
+        # <dict attributes>
         self.client_feedback = client_feedback
-        self.plate = plate
 
         # <Task type attributes>
         self.translation = translation
@@ -141,7 +174,6 @@ class Linguist:
 
         Applicable attribute names:
         client_feedback
-        plate
 
         Both the key and value must be provided, otherwise nothing will happen
         """
@@ -163,7 +195,6 @@ class Linguist:
 
         Applicable attribute names:
         client_feedback
-        plate
 
         Key name must be provided, otherwise nothing will happen
         """
@@ -180,6 +211,59 @@ class Linguist:
                 print(f"{attr_name} is not a dictionary")
         else:
             print(f"No attribute named {attr_name}")
+
+
+    def to_dict(self):
+        """Convert the Linguist object's data to a dictionary."""
+        # return {
+        #     'name': self.name,
+        #     'locale': self.locale,
+        #     'team': self.team,
+        #     'start_time': self.start_time,
+        #     'end_time': self.end_time,
+        #     'contract_hours': self.contract_hours,
+        #     'output': self.output,
+        #     'keep_deadlines': self.keep_deadlines,
+
+        #     <datetime attributes>
+        # start_time: datetime - The start time of the linguist on the day, default is 9am e.g. datetime(2023, 6, 27, 9, 0)
+        # end_time: datetime - The end time of the linguist on the day
+
+        # <number attributes>
+        # contract_hours: float - The contractual available hours of the linguist, default is 8.0
+        # output: int - The linguist's own daily output word rate, default is 2400
+        # keep_deadlines: int - The ability to keep deadlines, a score rating from 1 to 10, default is 10
+        
+        # <Availability attribute>
+        # remaining_availability_today: float - The remaining availability for the linguist today.
+
+        # <list attributes>
+        # plate: list - A list of all the tasks assigned to the linguist, each task is an instance of class Task, default is an empty list.
+
+        # <set attributes>
+        # expertise: set - The area(s) of expertise of the linguist, default is an empty set
+        # client_exp: set = The client(s) that the linguist has experience working on, default is an empty set
+
+        # <dict attributes>
+        # client_feedback: dict = The feedback received from any client, in a dictionary format {"client": "feedback"}, default is an empty dict
+
+        # <Task type attributes (all boolean and all yes by default)>
+        # translation
+        # review
+        # lso
+        # client_meeting
+        # test_translation
+        # }
+        pass
+    
+
+    def total_workload_until_datetime(self, datetime):
+        # for task in self.plate:
+        pass
+
+
+    def availability_until_deadline():
+        pass
 
 
     def add_task(self, task):
@@ -206,3 +290,4 @@ class Linguist:
         task_name = task.name
         hours_to_add = self.plate.pop(task_name)
         self.available_hours = self.available_hours + hours_to_add
+
