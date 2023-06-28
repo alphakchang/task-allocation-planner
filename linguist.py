@@ -6,31 +6,27 @@ class Linguist:
 
     Attributes:
         <string attributes>
+        username: string - The Alpha username of the linguist.
         name: string - The name of the linguist.
         locale: string - The primary locale that the linguist translates into. e.g. de-DE
         team: string - The strategic team in Alpha that the linguist belongs to. e.g. Nexus
-
-        <datetime attributes>
-        start_time: datetime - The start time of the linguist on the day, default is 9am e.g. datetime(2023, 6, 27, 9, 0)
-        end_time: datetime - The end time of the linguist on the day
 
         <number attributes>
         contract_hours: float - The contractual available hours of the linguist, default is 8.0
         output: int - The linguist's own daily output word rate, default is 2400
         keep_deadlines: int - The ability to keep deadlines, a score rating from 1 to 10, default is 10
-        
-        <Availability attribute>
-        remaining_availability_today: float - The remaining availability for the linguist today.
+
+        <datetime attributes>
+        start_time: datetime - The start time of the linguist on the day, default is 9am e.g. datetime(2023, 6, 27, 9, 0)
+        end_time: datetime - The end time of the linguist on the day
 
         <list attributes>
         plate: list - A list of all the tasks assigned to the linguist, each task is an instance of class Task, default is an empty list.
 
         <set attributes>
+        client_exp: set - The client(s) that the linguist has experience working on, default is an empty set
         expertise: set - The area(s) of expertise of the linguist, default is an empty set
-        client_exp: set = The client(s) that the linguist has experience working on, default is an empty set
-
-        <dict attributes>
-        client_feedback: dict = The feedback received from any client, in a dictionary format {"client": "feedback"}, default is an empty dict
+        client_redflag: set - Any clients that this linguist shouldn't work on, default is an empty set
 
         <Task type attributes (all boolean and all yes by default)>
         translation
@@ -39,6 +35,11 @@ class Linguist:
         client_meeting
         test_translation
 
+
+    Properties:
+        <Availability property>
+        remaining_availability_today: float - The remaining availability for the linguist today.
+    
     Methods:
         <Attribute related>
         get_attribute(attr_name) - returns the value of the attribute, param = attribute name
@@ -52,18 +53,24 @@ class Linguist:
         remove_task(self, task) - removes a task from plate
     """
     
-    def __init__(self, name: str, locale: str, team: str,
-                 start_time: time=None, end_time: time=None,
-                 contract_hours: float=8.0, output: int=2400, keep_deadlines: int=10,
-                 plate: list=[],
-                 client_exp: set={}, expertise: set={},
-                 client_feedback: dict={},
-                 translation: bool=True, review: bool=True, lso: bool=True, client_meeting: bool=True, test_translation: bool=True):
+    def __init__(self, username: str, name: str, locale: str, team: str,
+                 contract_hours: float, output: int, keep_deadlines: int = 10,
+                 start_time: time = None, end_time: time = None,
+                 plate = None,
+                 client_exp = None, expertise = None, client_redflag = None,
+                 translation: bool = True, review: bool = True, lso: bool = True,
+                 client_meeting: bool = True, test_translation: bool = True):
         
         # <string attributes>
+        self.username = username
         self.name = name
         self.locale = locale
         self.team = team
+
+        # <number attributes>
+        self.contract_hours = contract_hours
+        self.output = output
+        self.keep_deadlines = keep_deadlines
 
         # <datetime attributes>
         if start_time is None:
@@ -76,26 +83,23 @@ class Linguist:
             end_time = now.replace(hour=17, minute=0, second=0, microsecond=0)
         self.end_time = end_time
 
-        # <number attributes>
-        self.contract_hours = contract_hours
-        self.output = output
-        self.keep_deadlines = keep_deadlines
-
-        # <Availability attribute>
-        # The remaining_availability_today of a linguist is constantly changing since time is constantly moving forward, this attribute will be calculated by:
-        # finding the time_passed since start_time, then deduct contract_hours by time_passed, and all the task values in plate due today
-        time_passed = datetime.now() - self.start_time
-        self.remaining_availability_today = self.contract_hours - (time_passed.total_seconds() / 3600)
-
         # <list attributes>
+        if plate is None:
+            plate = list()
         self.plate = plate
 
         # <set attributes>
+        if client_exp is None:
+            client_exp = set()
         self.client_exp = client_exp
+
+        if expertise is None:
+            expertise = set()
         self.expertise = expertise
 
-        # <dict attributes>
-        self.client_feedback = client_feedback
+        if client_redflag is None:
+            client_redflag = set()
+        self.client_redflag = client_redflag
 
         # <Task type attributes>
         self.translation = translation
@@ -105,13 +109,21 @@ class Linguist:
         self.test_translation = test_translation
 
 
+    @property
+    def remaining_availability_today(self):
+        # The remaining_availability_today of a linguist is constantly changing since time is constantly moving forward, this attribute will be calculated by:
+        # finding the time_passed since start_time, then deduct contract_hours by time_passed, and all the task values in plate due today
+        time_passed = datetime.now() - self.start_time
+        return self.contract_hours - (time_passed.total_seconds() / 3600)
+
+
     def get_attribute(self, attr_name):
         """
         Returns the value of the attribute, if no such attribute exists, returns None
         """
         attr = attr_name.lower()
         if hasattr(self, attr):
-            if attr is self.client_exp or self.expertise: # check if the attribute is one of the set attributes, if yes, return the sorted value of the attribute
+            if attr is self.client_exp or self.expertise or self.client_redflag: # check if the attribute is one of the set attributes, if yes, return the sorted value of the attribute
                 print(f"{attr_name}: {sorted(getattr(self, attr))}")
                 return sorted(getattr(self, attr))
             else: # if the attribute is not one of the set attributes, return the value of the attribute
@@ -135,7 +147,7 @@ class Linguist:
             print(f"No attribute named {attr_name}")
 
 
-    def set_set_attribute(self, attr_name, value, action=None):
+    def set_set_attribute(self, attr_name, value, action: str = None):
         """
         Update an attribute with datatype set. Provide the attribute name, the value, and the action.
 
@@ -152,8 +164,10 @@ class Linguist:
         attr = attr_name.lower()
         if hasattr(self, attr):
             attr_value = getattr(self, attr)
-            if isinstance(attr_value, set) and action:
-                if action == 'add':
+            if isinstance(attr_value, set):
+                if action is None:
+                    print("Action needed, please enter 'add' or 'remove'")
+                elif action == 'add':
                     attr_value.add(value)
                 elif action == 'remove':
                     if value in attr_value:
@@ -162,8 +176,19 @@ class Linguist:
                         print(f"Can't find {value} in the list")
                 else:
                     print("Unknown action, please enter 'add' or 'remove'")
+                
+                setattr(self, attr, attr_value)
+                # if action == 'add':
+                #     attr_value.add(value)
+                # elif action == 'remove':
+                #     if value in attr_value:
+                #         attr_value.remove(value)
+                #     else:
+                #         print(f"Can't find {value} in the list")
+                # else:
+                #     print("Unknown action, please enter 'add' or 'remove'")
             else:
-                print("Action needed, please enter 'add' or 'remove'")
+                print("Not a set")
         else:
             print(f"No attribute named {attr_name}")
 
