@@ -90,15 +90,15 @@ class Linguist:
 
         # <set attributes>
         if client_exp is None:
-            client_exp = set()
+            client_exp = ""
         self.client_exp = client_exp
 
         if expertise is None:
-            expertise = set()
+            expertise = ""
         self.expertise = expertise
 
         if client_redflag is None:
-            client_redflag = set()
+            client_redflag = ""
         self.client_redflag = client_redflag
 
         # <Task type attributes>
