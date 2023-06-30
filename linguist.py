@@ -85,7 +85,7 @@ class Linguist:
 
         # <list attributes>
         if plate is None:
-            plate = list()
+            plate = ""
         self.plate = plate
 
         # <set attributes>
