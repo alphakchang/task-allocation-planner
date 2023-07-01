@@ -1,4 +1,4 @@
-class Availability:
+class Workload:
     """
     docstring
     """

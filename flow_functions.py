@@ -2,8 +2,8 @@
 
 from task import Task
 from linguist import Linguist
-from availability import Availability
-from datetime import datetime, timedelta
+from workload import Workload
+from datetime import datetime, timedelta, time
 import pandas as pd
 import numpy as np
 import os
@@ -62,18 +62,18 @@ def add_to_linguist_db(linguist, team=None):
         df.to_pickle(file_loc)
 
 
-def create_availability_db(linguist, team=None):
+def create_workload_db(linguist, team=None):
     if team is None:
         team = cookie_team
     
     # determine the file location
-    file_loc = f"task-allocation-planner/database/{team}/{linguist.username}_availability.pkl"
+    file_loc = f"task-allocation-planner/database/{team}/{linguist.username}_workload.pkl"
 
-    # create the availability class
-    linguist_availability = Availability(linguist.username, linguist.contract_hours)
+    # create the workload class
+    linguist_workload = Workload(linguist.username, linguist.contract_hours)
 
     # create the DataFrame
-    data = vars(linguist_availability)
+    data = vars(linguist_workload)
     df = pd.DataFrame([data])
     df.to_pickle(file_loc)
 
@@ -128,6 +128,8 @@ def set_attribute(username, attribute, new_value, team=None):
     locale => str
     contract_hours => float
     output => int
+    start_time => time e.g. (9,0,0)
+    end_time => time e.g. (17,30,0)
     translation => bool
     review => bool
     lso => bool
@@ -188,17 +190,20 @@ def availability_check(username, task, team=None):
 
     # Get the linguist output rate & end_time
     linguist_output_rate = all_linguists.loc[all_linguists["username"] == username, "output"].values[0]
+    print(f"linguist output: {linguist_output_rate}")
     linguist_end_time = all_linguists.loc[all_linguists["username"] == username, "end_time"].values[0] # Type is currently a numpy.datetime64
     print(f"linguist_end_time = {linguist_end_time}")
     # linguist_end_time_dt = pd.Timestamp(linguist_end_time).to_pydatetime() # This is now a datetime type
 
     # calculate the ratio between default and linguist's own output rate, then calculate the linguist required hours by applying the ratio to the default figure
-    ratio = linguist_output_rate / default_rate
+    ratio = default_rate / linguist_output_rate
+    print(f"ratio: {ratio}")
     linguist_required_hrs = default_required_hrs * ratio
+    print(f"linguist_required_hrs: {linguist_required_hrs}")
 
-    # Load the availability DB and check the columns to see if the deadline date exist
-    avail_db_file_loc = f"task-allocation-planner/database/{team}/{username}_availability.pkl"
-    linguist_availability = pd.read_pickle(avail_db_file_loc)
+    # Load the workload DB and check the columns to see if the deadline date exist
+    workload_db_file_loc = f"task-allocation-planner/database/{team}/{username}_workload.pkl"
+    linguist_workload = pd.read_pickle(workload_db_file_loc)
 
 
     ### Now start to check availability ###
@@ -226,17 +231,18 @@ def availability_check(username, task, team=None):
             start_datetime = end_datetime - timedelta(hours=linguist_required_hrs)
             print(f"start_datetime = {start_datetime}")
 
-            return True
+            return start_datetime, end_datetime, linguist_required_hrs
         else:
             return False
     else: # deadline is not today
+        print("testing")
         pass
 
 
     # first check if the deadline date is today, if yes, create a variable that equals to datetime.now(), and calculate the remaining availability
     # if remaining availability > linguist_required_hrs, then the linguist has time to do this task, otherwise no time.
     # If the deadline date is not today.
-    # While linguist_required_hrs > 0, check if availability DB has the column for deadline date,
+    # While linguist_required_hrs > 0, check if workload DB has the column for deadline date,
     # if it doesn't (first job for that day) then create a column with the deadline date, and make the value the same as contractual_hours.
     # Then deduct the linguist_required_hrs from contractual_hours, if contractual_hours becomes less than 0 (meaning the required hours is larger than available hours for that day)
     # In this case, keep a temp_note for the end_datetime, which is the same as the deadline, then deduct contractual_hours from linguistic_required_hrs
@@ -279,11 +285,16 @@ def assign_task_to_linguist(username, task, team=None):
     team => string - The team that the linguist is in
 
     3 Things need to happen when assigning a task to a linguist
+        
+        1. Check the availability using the availability_check() function
+
+            If the availability result is false, the linguist has no availability,
+            otherwise we should receive start_datetime, end_datetime & linguist_required_hrs
 
         1. Linguist DB update
         The plate attribute of the linguist should be updated by having the task name added to it
 
-        2. Availability DB update
+        2. workload DB update
         Use the function availability_check() first.
         If the linguist has enough availability, the task can be assigned, and will occupy the availability of the
         linguist for the day(s) and hours that it occupies. If the linguist doesn't have enough availability after working from the deadline backwards up to the current
@@ -300,52 +311,118 @@ def assign_task_to_linguist(username, task, team=None):
     if team is None:
         team = cookie_team
 
-    ### 1. Linguist DB update ###
+    ### 1. Check availability ###
 
-    # determine the file location
-    ling_db_file_loc = f"task-allocation-planner/database/{team}/{team}_linguists.pkl"
+    available = availability_check(username, task)
 
-    # Load all linguists out
-    all_linguists = pd.read_pickle(ling_db_file_loc)
+    if not available:
+        print("Linguist does not have enough availability")
+        return False
 
-    # First retrieve the current plate
-    current_plate = get_attribute(username, "plate", team)
+    else: ### 2. Update Linguist DB
 
-    # See if the plate is empty
-    if current_plate == "":
+        # determine the file location
+        ling_db_file_loc = f"task-allocation-planner/database/{team}/{team}_linguists.pkl"
 
-        # If the plate is empty, this is the first task, simply update and save the database
-        all_linguists.loc[all_linguists["username"] == username, "plate"] = task
-        all_linguists.to_pickle(ling_db_file_loc)
+        # Load all linguists out
+        all_linguists = pd.read_pickle(ling_db_file_loc)
+
+        # First retrieve the current plate
+        current_plate = get_attribute(username, "plate", team)
+
+        # See if the plate is empty
+        if current_plate == "":
+
+            # If the plate is empty, this is the first task, simply update and save the database
+            all_linguists.loc[all_linguists["username"] == username, "plate"] = task
+            all_linguists.to_pickle(ling_db_file_loc)
+        
+        else:
+            # Change the current plate from string to a list
+            plate_list = current_plate.split(",")
+
+            # Add the new task to the list
+            plate_list.append(task)
+
+            # Change the list back into a string
+            new_plate = ','.join(plate_list)
+
+            # Update and save the database
+            all_linguists.loc[all_linguists["username"] == username, "plate"] = new_plate
+            all_linguists.to_pickle(ling_db_file_loc)
     
-    else:
-        # Change the current plate from string to a list
-        plate_list = current_plate.split(",")
 
-        # Add the new task to the list
-        plate_list.append(task)
+        ### 3. Task DB Update ###
 
-        # Change the list back into a string
-        new_plate = ','.join(plate_list)
+        # determine the file location
+        task_db_file_loc = f"task-allocation-planner/database/{team}/{team}_tasks.pkl"
 
-        # Update and save the database
-        all_linguists.loc[all_linguists["username"] == username, "plate"] = new_plate
-        all_linguists.to_pickle(ling_db_file_loc)
-    
+        # Load all tasks out
+        all_tasks = pd.read_pickle(task_db_file_loc)
 
-    ### 3. Task DB Update ###
+        # Assign the task to the linguist and save database
+        all_tasks.loc[all_tasks["name"] == task, "assignee"] = username
+        all_tasks.loc[all_tasks["name"] == task, "start_datetime"] = available[0] # start_datetime
+        all_tasks.loc[all_tasks["name"] == task, "end_datetime"] = available[1] # end_datetime
+        all_tasks.loc[all_tasks["name"] == task, "assignee_required_hours"] = available[2] # linguist_required_hrs
 
-    # determine the file location
-    task_db_file_loc = f"task-allocation-planner/database/{team}/{team}_tasks.pkl"
+        all_tasks.to_pickle(task_db_file_loc)
 
-    # Load all tasks out
-    all_tasks = pd.read_pickle(task_db_file_loc)
+        ### 4. workload DB Update ###
 
-    # Assign the task to the linguist and save database
-    all_tasks.loc[all_tasks["name"] == task, "assignee"] = username
-    all_tasks.to_pickle(task_db_file_loc)
+        workload_db_file_loc = f"task-allocation-planner/database/{team}/{username}_workload.pkl"
+        linguist_workload = pd.read_pickle(workload_db_file_loc)
 
-    return None
+        date_to_record = available[1].strftime('%Y-%m-%d') # Get the date of end_datetime as string
+        print(f"original date: {date_to_record}")
+        hours_to_allocate = available[2]
+        print(f"original hours to allocate: {hours_to_allocate}")
+
+        while hours_to_allocate > 0:
+            if date_to_record in linguist_workload.columns:
+                workload_so_far = linguist_workload.at[0, date_to_record]
+                print(f"date found in DB, workload so far: {workload_so_far}")
+                still_available = linguist_workload.at[0, "contractual_availability"] - workload_so_far
+                print(f"still available = {still_available}")
+                if still_available >= hours_to_allocate:
+                    linguist_workload.at[0, date_to_record] = workload_so_far + hours_to_allocate
+                    print(f"new total workload: {linguist_workload.at[0, date_to_record]}")
+                    hours_to_allocate = 0
+                    linguist_workload.to_pickle(workload_db_file_loc) # Save the file
+
+                else: # not enough availability to cover hours to allocate
+                    linguist_workload.at[0, date_to_record] = linguist_workload.at[0, "contractual_availability"] # Fill the day to max
+                    print(f"day should be filled: {linguist_workload.at[0, date_to_record]}")
+                    hours_to_allocate = hours_to_allocate - still_available # reduce hours to allocate by the time allocated to this day
+                    print(f"remaining hours_to_allocate: {hours_to_allocate}")
+
+                    # Move the date backwards by 1 day
+                    date_datetime = datetime.strptime(date_to_record, '%Y-%m-%d')
+                    previous_date = date_datetime - timedelta(hours=24)
+                    date_to_record = previous_date.strftime('%Y-%m-%d')
+                    print(f"new date: {date_to_record}")
+
+                    linguist_workload.to_pickle(workload_db_file_loc) # Save the file
+            
+            else: # The workload DB doesn't have today's date
+                if linguist_workload.at[0, "contractual_availability"] > hours_to_allocate:
+                    linguist_workload[date_to_record] = hours_to_allocate
+                    print(f"today's date not in DB, now added date and workload: {date_to_record}, {linguist_workload.at[0, date_to_record]}")
+                    hours_to_allocate = 0
+                    linguist_workload.to_pickle(workload_db_file_loc) # Save the file
+                
+                else: # The availability this day cannot cover the hours_to_allocate
+                    linguist_workload.at[0, date_to_record] = linguist_workload.at[0, "contractual_availability"] # Fill the day to max
+                    hours_to_allocate = hours_to_allocate - linguist_workload.at[0, "contractual_availability"] # reduce hours to allocate by the time allocated to this day
+
+                    # Move the date backwards by 1 day
+                    date_datetime = datetime.strptime(date_to_record, '%Y-%m-%d')
+                    previous_date = date_datetime - timedelta(hours=24)
+                    date_to_record = previous_date.strftime('%Y-%m-%d')
+
+                    linguist_workload.to_pickle(workload_db_file_loc) # Save the file
+
+        return True
 
 
 def remove_task_from_linguist(username, task, team=None):
@@ -461,14 +538,18 @@ def remove_from_task_db(task_name, team=None):
 ##########
 
 # farm = create_linguist("farm", "farm bro", "fb")
-# create_availability_db(farm)
+# create_workload_db(farm)
 # add_to_linguist_db(farm)
 
 # kensolo = create_linguist("kensolo", "Ken Solo", "ks")
-# create_availability_db(kensolo)
+# create_workload_db(kensolo)
 # add_to_linguist_db(kensolo)
 
-# set_attribute("ffarm", "translation", False)
+# end_time = get_attribute("kensolo", "end_time")
+# print(end_time)
+# print(type(end_time))
+
+# set_attribute("kensolo", "end_time", time(23,0,0))
 
 # remove_task_from_linguist("kensolo", "lso")
 
@@ -482,10 +563,12 @@ def remove_from_task_db(task_name, team=None):
 
 # remove_from_linguist_db("ffarm")
 
-# task1 = create_task("review2", "tw", "review", datetime(2023, 7, 1, 17, 0), 2400, 2)
+# task1 = create_task("translation2", "tw", "review", datetime(2023, 7, 2, 17, 0), 2400, 2)
 # add_to_task_db(task1)
 
 # remove_from_task_db("review")
 
-decision = availability_check("kensolo", "review2", team=None)
+# set_attribute("kensolo", "output", 100000)
+
+decision = assign_task_to_linguist("kensolo", "review")
 print(decision)
