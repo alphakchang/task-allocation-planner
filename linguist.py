@@ -74,13 +74,11 @@ class Linguist:
 
         # <datetime attributes>
         if start_time is None:
-            now = datetime.now()
-            start_time = now.replace(hour=9, minute=0, second=0, microsecond=0)
+            start_time = time(9, 0, 0)
         self.start_time = start_time
 
         if end_time is None:
-            now = datetime.now()
-            end_time = now.replace(hour=17, minute=0, second=0, microsecond=0)
+            end_time = time(17, 0, 0)
         self.end_time = end_time
 
         # <list attributes>
