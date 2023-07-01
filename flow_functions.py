@@ -191,9 +191,8 @@ def availability_check(username, task, team=None):
     # Get the linguist output rate & end_time
     linguist_output_rate = all_linguists.loc[all_linguists["username"] == username, "output"].values[0]
     print(f"linguist output: {linguist_output_rate}")
-    linguist_end_time = all_linguists.loc[all_linguists["username"] == username, "end_time"].values[0] # Type is currently a numpy.datetime64
+    linguist_end_time = all_linguists.loc[all_linguists["username"] == username, "end_time"].values[0]
     print(f"linguist_end_time = {linguist_end_time}")
-    # linguist_end_time_dt = pd.Timestamp(linguist_end_time).to_pydatetime() # This is now a datetime type
 
     # calculate the ratio between default and linguist's own output rate, then calculate the linguist required hours by applying the ratio to the default figure
     ratio = default_rate / linguist_output_rate
@@ -232,11 +231,102 @@ def availability_check(username, task, team=None):
             print(f"start_datetime = {start_datetime}")
 
             return start_datetime, end_datetime, linguist_required_hrs
+        
         else:
             return False
+        
     else: # deadline is not today
-        print("testing")
-        pass
+        hours_to_allocate = linguist_required_hrs
+        date_to_check = deadline_date
+
+        while hours_to_allocate > 0:
+            if date_to_check in linguist_workload.columns:
+                workload_so_far = linguist_workload.at[0, date_to_check]
+                print(f"date found in DB, workload so far: {workload_so_far}")
+                still_available = linguist_workload.at[0, "contractual_availability"] - workload_so_far
+                print(f"still available = {still_available}")
+                if still_available is not 0:
+                    if still_available >= hours_to_allocate:
+                        end_datetime = linguist_end_time_today - timedelta(hours=workload_so_far)
+                        start_datetime = end_datetime -timedelta(hours=hours_to_allocate)
+                        hours_to_allocate = 0
+
+                    else: # Has availability but not enough to cover all the hours required
+                        end_datetime = linguist_end_time_today - timedelta(hours=workload_so_far)
+                        hours_to_allocate = hours_to_allocate - still_available
+
+                        while hours_to_allocate > 0:
+
+                            # Move the date backwards by 1 day
+                            date_datetime = datetime.strptime(date_to_check, '%Y-%m-%d')
+                            previous_date = date_datetime - timedelta(hours=24)
+                            date_to_check = previous_date.strftime('%Y-%m-%d')
+
+                            if date_to_check in linguist_workload.columns:
+                                workload_so_far = linguist_workload.at[0, date_to_check]
+                                print(f"date found in DB, workload so far: {workload_so_far}")
+                                still_available = linguist_workload.at[0, "contractual_availability"] - workload_so_far
+                                print(f"still available = {still_available}")
+                                if still_available is not 0:
+                                    if still_available >= hours_to_allocate:
+                                        temp_end_datetime = datetime.combine(previous_date, linguist_end_time)
+                                        start_datetime = temp_end_datetime - timedelta(hours=(workload_so_far + hours_to_allocate))
+                                        hours_to_allocate = 0
+
+                                    else: # Has availability but not enough to cover all the hours required
+                                        hours_to_allocate = hours_to_allocate - still_available
+
+                                else: # The day is fully occupied already
+                                    pass # Do nothing
+                            
+                            else: # Date not in DB
+                                if linguist_workload.at[0, "contractual_availability"] > hours_to_allocate:
+                                    temp_end_datetime = datetime.combine(previous_date, linguist_end_time)
+                                    start_datetime = temp_end_datetime - timedelta(hours=hours_to_allocate)
+                                    hours_to_allocate = 0
+
+                                else: # Not enough availability to cover all the hours required
+                                    hours_to_allocate = hours_to_allocate - linguist_workload.at[0, "contractual_availability"]
+##### continue from here ####
+                else: # The day is fully occupied already
+                    # Move the date backwards by 1 day
+                    date_datetime = datetime.strptime(date_to_check, '%Y-%m-%d')
+                    previous_date = date_datetime - timedelta(hours=24)
+                    date_to_check = previous_date.strftime('%Y-%m-%d')
+
+                
+
+
+                else: 
+                    
+                    else: 
+                        
+
+
+
+
+                    while hours_to_allocate > 0:
+                        # Move the date backwards by 1 day
+                        date_datetime = datetime.strptime(date_to_check, '%Y-%m-%d')
+                        previous_date = date_datetime - timedelta(hours=24)
+                        date_to_check = previous_date.strftime('%Y-%m-%d')
+
+                        workload_so_far = linguist_workload.at[0, date_to_check]
+
+                        still_available = linguist_workload.at[0, "contractual_availability"] - workload_so_far
+
+                        if still_available >= hours_to_allocate:
+                            temp_end_datetime = linguist_end_time_today - timedelta(hours=workload_so_far)
+                            start_datetime = end_datetime -timedelta(hours=hours_to_allocate)
+                            hours_to_allocate = 0
+                        
+                        else:
+                            hours_to_allocate = hours_to_allocate - still_available
+            
+            else: # date_to_check column doesn't exist
+                pass
+
+        return start_datetime, end_datetime, linguist_required_hrs
 
 
     # first check if the deadline date is today, if yes, create a variable that equals to datetime.now(), and calculate the remaining availability
