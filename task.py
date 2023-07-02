@@ -25,7 +25,8 @@ class Task:
     def __init__(self, name: str, locale: str, task_type: str, deadline: datetime,
                  default_rate: int, required_hours: float, team: str,
                  assignee: str = None, assignee_required_hours: float = None, status: str = None,
-                 completion_date: datetime = None, start_datetime: datetime = None, end_datetime: datetime = None):
+                 completion_date: datetime = None, start_datetime: datetime = None, end_datetime: datetime = None,
+                 same_day_fit: bool = None):
         
         self.name = name
         self.locale = locale
@@ -44,4 +45,5 @@ class Task:
         self.completion_date = completion_date
         self.start_datetime = start_datetime
         self.end_datetime = end_datetime
+        self.same_day_fit = same_day_fit
         
