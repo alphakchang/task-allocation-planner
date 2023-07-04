@@ -11,6 +11,10 @@ if __name__ == "__main__":
 def index():
     return render_template("linguist.html")
 
+@app.route("/individual.html")
+def individual():
+    return render_template("individual.html")
+
 @app.route('/linguistData', methods=['GET'])
 def get_linguistData():
     df = pd.read_pickle('database/fashion/fashion_linguists.pkl') 

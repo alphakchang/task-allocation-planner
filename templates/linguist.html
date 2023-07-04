@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,6 +10,9 @@
             section{
                 padding: 50px;
             }
+            .input-group-append {
+				cursor: pointer;
+			}
         </style>
         <!-- Include jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -50,18 +53,211 @@
                 <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
+                            <a href="#core" class="nav-link">Core</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#notices" class="nav-link">Notices</a>
+                        </li>
+                        <li class="nav-item">
                             <a href="#linguists" class="nav-link">Linguists</a>
                         </li>
                         <li class="nav-item">
                             <a href="#tasks" class="nav-link">Tasks</a>
                         </li>
-                        <li class="nav-item">
-                            <a href="#notices" class="nav-link">Notices</a>
-                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
+        <section id="core">
+            <div class="container-lg">
+                <div class="my-4 text-center">
+                    <h2><i class="bi bi-grid-3x2-gap-fill"></i> Core Functions</h2>
+                </div>
+                <div class="row align-items-center justify-content-center border border-secondary-subtle border-2 rounded-5 rounded-top-0 p-3">
+                    <div class="col">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions1" aria-controls="offcanvasWithBothOptions">Add Linguist</button>
+                        <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions1" aria-labelledby="offcanvasWithBothOptionsLabel">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel1">Add Linguist</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <form>
+                                    <label for="email" class="form-label">Alpha Email:</label>
+                                    <div class="mb-4 input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-envelope"></i>
+                                        </span>
+                                        <input type="email" class="form-control" id="email" placeholder="e.g. coffeeman@alphacrc.com">
+
+                                        <!-- tooltip -->
+                                        <span class="input-group-text">
+                                            <span class="tt" data-bs-placement="bottom" title="Enter an email address">
+                                                <i class="bi bi-question-circle text-muted"></i>
+                                            </span>
+                                        </span>
+                                    </div>
+        
+                                    <label for="name" class="form-label">Name:</label>
+                                    <div class="mb-4 input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="name" placeholder="e.g. Coffee Man">
+                                        <!-- tooltip -->
+                                        <span class="input-group-text">
+                                            <span class="tt" data-bs-placement="bottom" title="Enter your name">
+                                                <i class="bi bi-question-circle text-muted"></i>
+                                            </span>
+                                        </span>
+                                    </div>
+        
+                                    <label for="subject" class="form-label">Main Locale</label>
+                                    <div class="input-group mb-4">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-chat-dots"></i>
+                                        </span>
+                                        <select id="subject" class="form-select">
+                                            <option value="pricing" selected>fr-FR</option>
+                                            <option value="content">de_DE</option>
+                                            <option value="other">es-ES</option>
+                                        </select>
+                                    </div>
+        
+                                    <div class="mb-4 text-center">
+                                        <button type="submit" class="btn btn-secondary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions2" aria-controls="offcanvasWithBothOptions">Add Task</button>
+                        <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions2" aria-labelledby="offcanvasWithBothOptionsLabel">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel2">Add a task</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <form>
+                                    <label for="taskName" class="form-label">Task Name:</label>
+                                    <div class="mb-4 input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-list-task"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="taskName" placeholder="e.g. Translation">
+
+                                        <!-- tooltip -->
+                                        <span class="input-group-text">
+                                            <span class="tt" data-bs-placement="bottom" title="Enter a task name">
+                                                <i class="bi bi-question-circle text-muted"></i>
+                                            </span>
+                                        </span>
+                                    </div>
+        
+                                    <label for="locale" class="form-label">Locale:</label>
+                                    <div class="mb-4 input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-globe"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="locale" placeholder="e.g. de-DE">
+
+                                        <!-- tooltip -->
+                                        <span class="input-group-text">
+                                            <span class="tt" data-bs-placement="bottom" title="Enter the locale for the task">
+                                                <i class="bi bi-question-circle text-muted"></i>
+                                            </span>
+                                        </span>
+                                    </div>
+
+                                    <label for="taskType" class="form-label">Task Type</label>
+                                    <div class="input-group mb-4">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-regex"></i>
+                                        </span>
+                                        <select id="taskType" class="form-select">
+                                            <option value="pricing" selected>Translation</option>
+                                            <option value="content">Review</option>
+                                            <option value="other">LSO</option>
+                                            <option value="other">Client Meeting</option>
+                                            <option value="other">Test Translation</option>
+                                        </select>
+                                    </div>
+
+                                    <label for="subject" class="form-label">Deadline</label>
+                                    <div class="input-group date mb-4" id="datepicker">
+                                        <input type="text" class="form-control" id="date"/>
+                                        <span class="input-group-append">
+                                        <span class="input-group-text bg-light d-block">
+                                            <i class="bi bi-calendar-event"></i>
+                                        </span>
+                                        </span>
+                                    </div>
+        
+                                    <div class="mb-4 text-center">
+                                        <button type="submit" class="btn btn-secondary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <button class="btn btn-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTopWithBothOptions" aria-controls="offcanvasTopWithBothOptions">Assign Task</button>
+                        <div class="offcanvas offcanvas-top" data-bs-scroll="true" tabindex="-1" id="offcanvasTopWithBothOptions" aria-labelledby="offcanvasTopWithBothOptionsLabel">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">WIP</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <p>WIP</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <button class="btn btn-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTopWithBothOptions" aria-controls="offcanvasTopWithBothOptions">Re-assign Task</button>
+                        <div class="offcanvas offcanvas-top" data-bs-scroll="true" tabindex="-1" id="offcanvasTopWithBothOptions" aria-labelledby="offcanvasTopWithBothOptionsLabel">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">WIP</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <p>WIP</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <button class="btn btn-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightWithBothOptions" aria-controls="offcanvasRightWithBothOptions">Delete Task</button>
+                        <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasRightWithBothOptions" aria-labelledby="offcanvasRightWithBothOptionsLabel">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">WIP</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <p>WIP</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <button class="btn btn-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightWithBothOptions" aria-controls="offcanvasRightWithBothOptions">Delete Linguist</button>
+                        <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasRightWithBothOptions" aria-labelledby="offcanvasRightWithBothOptionsLabel">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">WIP</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <p>WIP</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
 
         <!-- Linguists -->
         <section id="linguists">
@@ -74,9 +270,11 @@
                         <div class="card border-0">
                             <div class="card-body text-center py-4">
                                 <h4 class="card-title"><i class="bi bi-person-square"></i> Ken Chang</h4>
-                                <span data-bs-placement="bottom" title="">
-                                    <img src="./static/img/Ken.jpg" alt="" class="img-fluid rounded-4 img-thumbnail">
-                                </span>
+                                <a href="./individual.html">
+                                    <span data-bs-placement="bottom" title="">
+                                        <img src="./static/img/Ken.jpg" alt="" class="img-fluid rounded-4 img-thumbnail">
+                                    </span>
+                                </a>
                                 <p class="lead card-subtitle"><i class="bi bi-globe"></i> zh-TW</p>
                             </div>
                         </div>
@@ -201,7 +399,7 @@
                 </div>
                 <div class="row my-5 align-items-center justify-content-center g-5">
                     <div class="col-8 col-lg-4 col-xl-3">
-                        <div class="card border-0">
+                        <div class="card border-1">
                             <div class="card-body text-center py-4">
                                 <h4 class="card-title">Translation</h4>
                                 <p class="lead card-subtitle">fr-FR</p>
@@ -212,7 +410,7 @@
                     </div> <!-- End of card -->
 
                     <div class="col-8 col-lg-4 col-xl-3">
-                        <div class="card border-0">
+                        <div class="card border-1">
                             <div class="card-body text-center py-4">
                                 <h4 class="card-title">Translation</h4>
                                 <p class="lead card-subtitle">it-IT</p>
@@ -223,7 +421,7 @@
                     </div> <!-- End of card -->
 
                     <div class="col-8 col-lg-4 col-xl-3">
-                        <div class="card border-0">
+                        <div class="card border-1">
                             <div class="card-body text-center py-4">
                                 <h4 class="card-title">Translation</h4>
                                 <p class="lead card-subtitle">ja-JP</p>
@@ -234,7 +432,7 @@
                     </div> <!-- End of card -->
 
                     <div class="col-8 col-lg-4 col-xl-3">
-                        <div class="card border-0">
+                        <div class="card border-1">
                             <div class="card-body text-center py-4">
                                 <h4 class="card-title">Review</h4>
                                 <p class="lead card-subtitle">ko-KR</p>
@@ -248,7 +446,7 @@
 
                 <div class="row my-5 align-items-center justify-content-center g-5">
                     <div class="col-8 col-lg-4 col-xl-3">
-                        <div class="card border-0">
+                        <div class="card border-1">
                             <div class="card-body text-center py-4">
                                 <h4 class="card-title">LSO</h4>
                                 <p class="lead card-subtitle">pt-BR</p>
@@ -259,7 +457,7 @@
                     </div> <!-- End of card -->
 
                     <div class="col-8 col-lg-4 col-xl-3">
-                        <div class="card border-0">
+                        <div class="card border-1">
                             <div class="card-body text-center py-4">
                                 <h4 class="card-title">Translation</h4>
                                 <p class="lead card-subtitle">nl-NL</p>
@@ -270,7 +468,7 @@
                     </div> <!-- End of card -->
 
                     <div class="col-8 col-lg-4 col-xl-3">
-                        <div class="card border-0">
+                        <div class="card border-1">
                             <div class="card-body text-center py-4">
                                 <h4 class="card-title">SEO</h4>
                                 <p class="lead card-subtitle">de-DE</p>
@@ -283,12 +481,11 @@
                 </div> <!-- End of row -->
             </div>
         </section>
-
         <!-- Notices at a glance -->
         <section id="notices">
             <div class="container-md">
                 <div class="text-center">
-                    <h2>Team Notices</h2>
+                    <h2><i class="bi bi-clipboard-fill"></i> Team Notices</h2>
                 </div>
             </div>
 
@@ -303,9 +500,10 @@
                                     4-7-2023 - Test Translation for zh-CN
                                 </button>
                             </h2>
-                            <div id="sector-1" class="accordion-collapse collapse show"
+                            <div id="sector-1" class="accordion-collapse collapse"
                             aria-labelledby="heading-1" data-bs-parent="#sectors">
                                 <div class="accordion-body">
+                                    <p>Hi everyone,</p>
                                     <p>Test Translation for zh-CN expected, first priority!</p>
                                 </div>
                             </div>
@@ -337,6 +535,7 @@
                             <div id="sector-3" class="accordion-collapse collapse"
                             aria-labelledby="heading-3" data-bs-parent="#sectors">
                                 <div class="accordion-body">
+                                    <p>Hi all!</p>
                                     <p>Team lunch will take place in the bowling place, leave the office together at 12:15pm</p>
                                 </div>
                             </div>
@@ -345,6 +544,7 @@
                 </div>
             </div>
         </section>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
         <script src="./static/js/script.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
@@ -353,6 +553,12 @@
             tooltips.forEach(t => {
                 new bootstrap.Tooltip(t);
             })
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+        <script>
+            $(function(){
+                $('#datepicker').datepicker();
+            });
         </script>
     </body>
 </html>
