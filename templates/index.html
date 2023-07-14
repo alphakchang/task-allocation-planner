@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./static/img/aai_icon.png" type="image/x-icon">
+    <title>Home - At a glance</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./static/css/index_style.css">
+</head>
+<body>
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-md fixed-top" id="top">
+        <div class="container-fluid">
+                <a href="https://alphacrc.com/">
+                    <span class="m-3">
+                        <img src="./static/img/alpha_logo.png" height="50px" width="50px">
+                    </span>
+                </a>
+                <span class="fw-bold text-uppercase navbar-brand navTitle">
+                    Alpha Work Allocation Planner
+                </span>
+
+            <!-- toggle button for mobile nav -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false"
+            aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- navbar links -->
+            <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="#myWorkload" class="nav-link">My Workload</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#teamWorkload" class="nav-link">Team Workload</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://portal.alphacrc.com:3443/" class="nav-link">Alpha Portal</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <button class="btn btn-secondary bi bi-nintendo-switch" id="colorModeToggle"> Switch Color Mode</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- My Workload -->
+    <section id="myWorkload">
+        <div class="container-lg">
+
+            <!-- Title -->
+            <div class="row my-3">
+                <div class="col-sm-2 p-1 border border-2 rounded bg-primary-subtle text-center">
+                    <span class="fs-5 fw-bold">My Workload</span>
+                </div>
+            </div>
+
+            <!-- Linguist info -->
+            <div class="row g-3 d-flex align-content-center">
+                <div class="col-sm-1 p-1 border border-2 rounded bg-dark-subtle d-flex justify-content-center align-items-center">
+                    <span class="fs-5 fw-bold">Name</span>
+                </div>
+                <div class="col-sm-3 d-flex align-content-center">
+                    <span class="display-5">Ken Chang</span>
+                </div>
+                <div class="col-sm-1 p-1 border border-2 rounded bg-dark-subtle d-flex justify-content-center align-items-center">
+                    <span class="fs-5 fw-bold">Locale</span>
+                </div>
+                <div class="col-sm-2 d-flex align-content-center">
+                    <span class="display-5">zh-TW</span>
+                </div>
+            </div>
+        
+
+            <!-- Workload Info -->
+            <div class="row my-4">
+                <div class="col-lg-2 col-md-3">
+                    <div class="row g-3">
+                        <div class="p-1 border border-2 rounded bg-dark-subtle">
+                            <span class="input-group-text">Workload today</span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="p-1">
+                            <canvas id="myTodayChart" height="525"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-9">
+                    <div class="row g-3">
+                        <div class="p-1 border border-2 rounded bg-dark-subtle" id="workloadHeader">
+                            <span class="input-group-text">Weekly workload</span>
+                            
+                            <!-- Tooltip -->
+                            <span class="input-group-text">
+                                <span class="tt" data-bs-placement="bottom" title="Showing workload for the current week, can view other weeks by clicking on the arrows">
+                                    <i class="bi bi-question-circle text-muted"></i>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="p-1">
+
+                            <!-- Workload Carousel Display -->
+                            <div id="carouselWeeklyWorkload" class="carousel slide">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <canvas id="chart_current_week"></canvas>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <canvas id="chart_next_week"></canvas>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <canvas id="chart_next_next_week"></canvas>
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselWeeklyWorkload" data-bs-slide="prev">
+                                    <span class="bi bi-arrow-left-circle" aria-hidden="true"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselWeeklyWorkload" data-bs-slide="next">
+                                    <span class="bi bi-arrow-right-circle" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <!-- End of Workload Carousel Display -->
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <div class="row g-3">
+                        <div class="p-1 border border-2 rounded bg-dark-subtle" id="workloadHeader">
+                            <span class="input-group-text">To-do Top 3</span>
+                            <div id="workloadHeader">
+                                <span class="mx-1">
+                                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightWithBothOptions" aria-controls="offcanvasRightWithBothOptions">See full To-do list</button>
+                                    <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasRightWithBothOptions" aria-labelledby="offcanvasRightWithBothOptionsLabel">
+                                        <div class="offcanvas-header">
+                                            <h5 class="offcanvas-title p-2" id="offcanvasWithBothOptionsLabel"><i class="bi bi-list-task"></i> To-do List</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                        </div>
+                                        <div class="offcanvas-body">
+                                            <table class="table">
+                                                <thead>
+                                                  <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Required Hours</th>
+                                                    <th scope="col">Deadline</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr class="table-danger">
+                                                    <th scope="row">1</th>
+                                                    <td>Translation1</td>
+                                                    <td>3.5</td>
+                                                    <td>17-7-2023 16:00</td>
+                                                  </tr>
+                                                  <tr class="table-warning">
+                                                    <th scope="row">2</th>
+                                                    <td>Translation2</td>
+                                                    <td>1.67</td>
+                                                    <td>17-7-2023 17:00</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <th scope="row">3</th>
+                                                    <td>LSO1</td>
+                                                    <td>2.33</td>
+                                                    <td>18-7-2023 17:00</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <th scope="row">4</th>
+                                                    <td>Review1</td>
+                                                    <td>5.67</td>
+                                                    <td>19-7-2023 17:00</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <th scope="row">5</th>
+                                                    <td>Translation3</td>
+                                                    <td>3.18</td>
+                                                    <td>20-7-2023 17:00</td>
+                                                  </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </span>
+
+                                <!-- Tooltip -->
+                                <span class="input-group-text">
+                                    <span class="tt" data-bs-placement="bottom" title="To-Do list shows top 3 items, click 'See All' to see all items">
+                                        <i class="bi bi-question-circle text-muted"></i>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="row g-3">
+                        <div class="p-1">
+
+                            <!-- To-Do List Table -->
+
+                            <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Required Hours</th>
+                                    <th scope="col">Deadline</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <th scope="row">1</th>
+                                    <td>Translation1</td>
+                                    <td>3.5</td>
+                                    <td>17-7-2023 16:00</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row">2</th>
+                                    <td>Translation2</td>
+                                    <td>1.67</td>
+                                    <td>17-7-2023 17:00</td>
+                                  </tr>
+                                  <tr>
+                                    <th scope="row">3</th>
+                                    <td>LSO1</td>
+                                    <td>2.33</td>
+                                    <td>18-7-2023 17:00</td>
+                                  </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- End of To-Do List Table -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Team Workload section -->
+    <section id="teamWorkload">
+        <div class="container-lg">
+            
+            <!-- Title -->
+            <div class="row my-3">
+                <div class="col-sm-2 p-1 border border-2 rounded bg-primary-subtle text-center">
+                    <span class="fs-5 fw-bold">Team Workload</span>
+                </div>
+            </div>
+
+            <!-- Team At a glance -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row g-3">
+                        <div class="p-1 border border-2 rounded bg-dark-subtle" id="workloadHeader">
+                            <span class="input-group-text">Workload today</span>
+
+                            <!-- Tooltip -->
+                            <span class="input-group-text">
+                                <span class="tt" data-bs-placement="bottom" title="This shows the workload for each individual memeber">
+                                    <i class="bi bi-question-circle text-muted"></i>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="p-1">
+                            <canvas id="teamTodayChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row g-3">
+                        <div class="p-1 border border-2 rounded bg-dark-subtle" id="workloadHeader">
+                            <span class="input-group-text">Weekly workload</span>
+                            
+                            <!-- Tooltip -->
+                            <span class="input-group-text">
+                                <span class="tt" data-bs-placement="bottom" title="The collective workload of the whole locale team combined for the week, can view other weeks by clicking on the arrows">
+                                    <i class="bi bi-question-circle text-muted"></i>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="p-1">
+
+                            <!-- Workload Carousel Display -->
+                            <div id="carouselTeamWeeklyWorkload" class="carousel slide">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <canvas id="team_week"></canvas>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <canvas id="team_next_week"></canvas>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <canvas id="team_next_next_week"></canvas>
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselTeamWeeklyWorkload" data-bs-slide="prev">
+                                    <span class="bi bi-arrow-left-circle" aria-hidden="true"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselTeamWeeklyWorkload" data-bs-slide="next">
+                                    <span class="bi bi-arrow-right-circle" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <!-- End of Workload Carousel Display -->
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="text-center my-3">
+            <h6 class="text-secondary">
+                <span>&copy; 2023 </span><span>Alpha </span><span>CRC</span><span>AI power within</span>
+            </h6>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./static/js/index_scripts.js"></script>
+    <script>
+        const tooltips = document.querySelectorAll('.tt')
+        tooltips.forEach(t => {
+            new bootstrap.Tooltip(t);
+        })
+    </script>
+</body>
+</html>
