@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./static/img/aai_icon.png" type="image/x-icon">
+    <title>Linguist Info</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./static/css/index_style.css">
+</head>
+<body>
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-md fixed-top" id="top">
+        <div class="container-fluid">
+                <a href="https://alphacrc.com/">
+                    <span class="m-3">
+                        <img src="./static/img/alpha_logo.png" height="50px" width="50px">
+                    </span>
+                </a>
+                <span class="fw-bold text-uppercase navbar-brand navTitle">
+                    Alpha Work Allocation Planner
+                </span>
+
+            <!-- toggle button for mobile nav -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false"
+            aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- navbar links -->
+            <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Back to Workload</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <button class="btn btn-secondary bi bi-nintendo-switch" id="colorModeToggle"> Switch Color Mode</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- My Workload -->
+    <section id="myWorkload">
+        <div class="container-lg">
+
+            <!-- Title -->
+            <div class="row my-3">
+                <div class="col-sm-2 p-1 border border-2 rounded bg-primary-subtle text-center">
+                    <span class="fs-5 fw-bold">All Tasks</span>
+                </div>
+            </div>
+
+            <!-- All tasks info -->
+            <div class="row">
+                <div class="col-12">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><input type="text" class="form-control" id="nameFilter" placeholder="Name"></th>
+                                <td><input type="text" class="form-control" id="hrFilter" placeholder="Required Hrs"></th>
+                                <td><input type="text" class="form-control" id="localeFilter" placeholder="Locale"></th>
+                                <td><input type="text" class="form-control" id="deadlineFilter" placeholder="Deadline"></th>
+                                <td><input type="text" class="form-control" id="statusFilter" placeholder="Status"></th>
+                                <td><input type="text" class="form-control" id="assigneeFilter" placeholder="Assignee"></th>
+                            </tr>
+                            <tr class="table-danger">
+                                <td>Translation1</td>
+                                <td>3.5</td>
+                                <td>zh-TW</td>
+                                <td>17-7-2023 16:00</td>
+                                <td>Assigned</td>
+                                <td>Ken</td>
+                            </tr>
+                            <tr class="table-warning">
+                                <td>Translation2</td>
+                                <td>1.67</td>
+                                <td>zh-TW</td>
+                                <td>17-7-2023 17:00</td>
+                                <td>Assigned</td>
+                                <td>Alex</td>
+                            </tr>
+                            <tr>
+                                <td>LSO1</td>
+                                <td>2.33</td>
+                                <td>zh-TW</td>
+                                <td>18-7-2023 17:00</td>
+                                <td>Assigned</td>
+                                <td>Steen</td>
+                            </tr>
+                            <tr>
+                                <td>Review1</td>
+                                <td>5.67</td>
+                                <td>zh-TW</td>
+                                <td>19-7-2023 17:00</td>
+                                <td>Assigned</td>
+                                <td>Alex</td>
+                            </tr>
+                            <tr>
+                                <td>Translation3</td>
+                                <td>3.18</td>
+                                <td>zh-TW</td>
+                                <td>20-7-2023 17:00</td>
+                                <td>Assigned</td>
+                                <td>Steen</td>
+                            </tr>
+                            <tr>
+                                <td>Translation4</td>
+                                <td>2.33</td>
+                                <td>zh-TW</td>
+                                <td>21-7-2023 17:00</td>
+                                <td>Assigned</td>
+                                <td>Inacio</td>
+                            </tr>
+                            <tr>
+                                <td>LSO2</td>
+                                <td>1.67</td>
+                                <td>zh-TW</td>
+                                <td>22-7-2023 17:00</td>
+                                <td>Assigned</td>
+                                <td>Alex</td>
+                            </tr>
+                            <tr>
+                                <td>Review2</td>
+                                <td>1.67</td>
+                                <td>zh-TW</td>
+                                <td>23-7-2023 17:00</td>
+                                <td>Assigned</td>
+                                <td>Inacio</td>
+                            </tr>
+                            <tr>
+                                <td>Translation5</td>
+                                <td>2.0</td>
+                                <td>fr-FR</td>
+                                <td>19-7-2023 10:00</td>
+                                <td>In Progress</td>
+                                <td>Inacio</td>
+                            </tr>
+                            <tr>
+                                <td>Translation6</td>
+                                <td>4.0</td>
+                                <td>fr-FR</td>
+                                <td>28-7-2023 10:00</td>
+                                <td>In Progress</td>
+                                <td>Ken</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr class="border border-primary-subtle border-2 opacity-33">
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="text-center my-3">
+            <h6 class="text-secondary">
+                <span>&copy; 2023 </span><span>Alpha </span><span>CRC</span><span>AI power within</span>
+            </h6>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./static/js/tasks_scripts.js"></script>
+</body>
+</html>

@@ -15,6 +15,10 @@ def index():
 def individual():
     return render_template("individual.html")
 
+@app.route("/tasks.html")
+def tasks():
+    return render_template("tasks.html")
+
 @app.route('/linguistData', methods=['GET'])
 def get_linguistData():
     df = pd.read_pickle('database/fashion/fashion_linguists.pkl') 
